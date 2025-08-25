@@ -32,5 +32,3 @@ This will:
 - Create a counter account with initial storage
 - Create and submit a counter note
 - Demonstrate the full end-to-end workflow
-
-The script uses **real compiler integration** (no mocking) and executes transactions on the actual Miden testnet.
