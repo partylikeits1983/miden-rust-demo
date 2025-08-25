@@ -1,0 +1,30 @@
+# Rust compiled files
+target/
+*/target/
+**/target/
+Cargo.lock
+
+# Miden compiled files
+*.masp
+*.masm
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Keystore (contains sensitive keys)
+scripts/keystore/
+scripts/store.sqlite3
+
+# Temporary files
+*.tmp
+*.temp

@@ -1,0 +1,13 @@
+package miden:counter-contract-note@0.1.0;
+
+
+world counter-contract-note-world {
+    include miden:core-intrinsics/intrinsics@1.0.0;
+    include miden:core-stdlib/stdlib@1.0.0;
+    include miden:core-base/base@1.0.0;
+
+    // TODO: import your account interface here
+    import miden:counter-contract/counter@0.1.0;
+
+    export miden:base/note-script@1.0.0;
+}
