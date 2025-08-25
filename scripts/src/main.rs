@@ -14,7 +14,10 @@ use std::sync::Arc;
 
 mod helpers;
 
-use helpers::{AccountCreationConfig, NoteCreationConfig, compile_rust_package, create_account_with_component, create_note_from_package};
+use helpers::{
+    compile_rust_package, create_account_with_component, create_note_from_package,
+    AccountCreationConfig, NoteCreationConfig,
+};
 
 fn assert_counter_storage(
     counter_account_storage: &miden_client::account::AccountStorage,

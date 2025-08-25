@@ -20,13 +20,15 @@ use miden_client::{
 use miden_lib::utils::Deserializable;
 use miden_mast_package::Package;
 use miden_objects::{
-    account::{AccountBuilder, AccountComponent, AccountComponentMetadata, AccountComponentTemplate},
-    asset::Asset,
+    account::{
+        AccountBuilder, AccountComponent, AccountComponentMetadata, AccountComponentTemplate,
+    },
     assembly::Assembler,
+    asset::Asset,
     FieldElement,
 };
-use std::collections::BTreeSet;
 use rand::{rngs::StdRng, RngCore};
+use std::collections::BTreeSet;
 
 /// Configuration for creating an account with a custom component
 pub struct AccountCreationConfig {
@@ -61,7 +63,8 @@ pub async fn create_account_with_component(
         Some(bytes) => {
             let metadata = AccountComponentMetadata::read_from_bytes(bytes).unwrap();
 
-            let template = AccountComponentTemplate::new(metadata, package.unwrap_library().as_ref().clone());
+            let template =
+                AccountComponentTemplate::new(metadata, package.unwrap_library().as_ref().clone());
 
             let component =
                 AccountComponent::new(template.library().clone(), config.storage_slots).unwrap();
@@ -98,7 +101,9 @@ pub async fn create_account_with_component(
 
     let (account, seed) = builder.build().unwrap();
     client.add_account(&account, Some(seed), false).await?;
-    keystore.add_key(&AuthSecretKey::RpoFalcon512(key_pair)).unwrap();
+    keystore
+        .add_key(&AuthSecretKey::RpoFalcon512(key_pair))
+        .unwrap();
 
     Ok(account)
 }
@@ -138,7 +143,7 @@ pub fn create_note_from_package(
     let assembler = Assembler::default();
     let note_script = NoteScript::compile("begin push.1 end", assembler).unwrap();
 
-    let serial_num = client.rng().draw_word(); 
+    let serial_num = client.rng().draw_word();
     let note_inputs = NoteInputs::new(config.inputs).unwrap();
     let recipient = NoteRecipient::new(serial_num, note_script, note_inputs);
 
@@ -157,9 +162,9 @@ pub fn create_note_from_package(
 /// Helper to compile a Rust package to Miden using the real compiler
 pub fn compile_rust_package(package_path: &str, release: bool) -> Arc<Package> {
     use midenc_frontend_wasm::WasmTranslationConfig;
-    
+
     println!("  Compiling Rust package at: {}", package_path);
-    
+
     // Run the compilation in a blocking thread to avoid runtime conflicts
     let package_path = package_path.to_string();
     let handle = std::thread::spawn(move || {
@@ -174,7 +179,7 @@ pub fn compile_rust_package(package_path: &str, release: bool) -> Arc<Package> {
         let mut test = builder.build();
         test.compiled_package()
     });
-    
+
     let package = handle.join().expect("Compilation thread panicked");
     println!("  ✓ Successfully compiled package");
     package
@@ -202,7 +207,10 @@ pub struct CargoTest {
 }
 
 impl CargoTest {
-    pub fn new(name: impl Into<std::borrow::Cow<'static, str>>, project_dir: std::path::PathBuf) -> Self {
+    pub fn new(
+        name: impl Into<std::borrow::Cow<'static, str>>,
+        project_dir: std::path::PathBuf,
+    ) -> Self {
         Self {
             project_dir,
             name: name.into(),
@@ -224,7 +232,7 @@ impl CompilerTestBuilder {
             format!("{workspace_dir}=../../").into(),
         ];
         let midenc_flags = vec!["--verbose".into()];
-        
+
         Self {
             config: Default::default(),
             source,
@@ -262,10 +270,10 @@ impl CompilerTestBuilder {
     }
 
     pub fn build(mut self) -> CompilerTest {
-        use std::process::{Command, Stdio};
-        use std::ffi::OsStr;
         use midenc_session::{InputFile, InputType};
-        
+        use std::ffi::OsStr;
+        use std::process::{Command, Stdio};
+
         // Set up the command used to compile the test inputs (Rust -> Wasm)
         let mut command = Command::new("cargo");
         command.arg("miden").arg("build");
@@ -310,12 +318,12 @@ impl CompilerTestBuilder {
             .map(|s| s.to_str().unwrap().to_string())
             .collect();
         args.extend(cmd_args);
-        
+
         let build_output = cargo_miden::run(args.into_iter(), cargo_miden::OutputType::Wasm)
             .unwrap()
             .expect("'cargo miden build' should return Some(CommandOutput)")
             .unwrap_build_output();
-            
+
         let (wasm_artifact_path, mut extra_midenc_flags) = match build_output {
             cargo_miden::BuildOutput::Wasm {
                 artifact_path,
@@ -323,9 +331,14 @@ impl CompilerTestBuilder {
             } => (artifact_path, midenc_flags),
             other => panic!("Expected Wasm output, got {:?}", other),
         };
-        
+
         self.midenc_flags.append(&mut extra_midenc_flags);
-        let artifact_name = wasm_artifact_path.file_stem().unwrap().to_str().unwrap().to_string();
+        let artifact_name = wasm_artifact_path
+            .file_stem()
+            .unwrap()
+            .to_str()
+            .unwrap()
+            .to_string();
         let input_file = InputFile::from_path(wasm_artifact_path).unwrap();
         let mut inputs = vec![input_file];
         inputs.extend(self.link_masm_modules.into_iter().map(|(path, content)| {
@@ -391,7 +404,7 @@ impl CompilerTest {
     }
 
     fn compile_wasm_to_masm_program(&mut self) -> Result<(), String> {
-        use midenc_compile::{CodegenOutput, compile_link_output_to_masm_with_pre_assembly_stage};
+        use midenc_compile::{compile_link_output_to_masm_with_pre_assembly_stage, CodegenOutput};
         use midenc_hir::Context;
 
         let mut src = None;
@@ -453,13 +466,23 @@ where
 /// Get the directory for the top-level workspace
 fn get_workspace_dir() -> String {
     // Get the directory for the integration test suite project
-    let cargo_manifest_dir = std::env::var("CARGO_MANIFEST_DIR")
-        .unwrap_or(std::env::current_dir().unwrap().to_str().unwrap().to_string());
+    let cargo_manifest_dir = std::env::var("CARGO_MANIFEST_DIR").unwrap_or(
+        std::env::current_dir()
+            .unwrap()
+            .to_str()
+            .unwrap()
+            .to_string(),
+    );
     let cargo_manifest_dir_path = std::path::Path::new(&cargo_manifest_dir);
     // "Exit" the integration test suite project directory to the compiler workspace directory
     // i.e. out of the `tests/integration` directory
-    let compiler_workspace_dir =
-        cargo_manifest_dir_path.parent().unwrap().parent().unwrap().to_str().unwrap();
+    let compiler_workspace_dir = cargo_manifest_dir_path
+        .parent()
+        .unwrap()
+        .parent()
+        .unwrap()
+        .to_str()
+        .unwrap();
     compiler_workspace_dir.to_string()
 }
 
@@ -488,7 +511,9 @@ pub async fn create_fungible_faucet_account(
 
     let (account, seed) = builder.build().unwrap();
     client.add_account(&account, Some(seed), false).await?;
-    keystore.add_key(&AuthSecretKey::RpoFalcon512(key_pair)).unwrap();
+    keystore
+        .add_key(&AuthSecretKey::RpoFalcon512(key_pair))
+        .unwrap();
 
     Ok(account)
 }
