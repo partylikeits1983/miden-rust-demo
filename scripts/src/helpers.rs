@@ -135,13 +135,15 @@ impl Default for NoteCreationConfig {
 /// For now, this creates a simple note since we have version compatibility issues
 pub fn create_note_from_package(
     client: &mut Client,
-    _package: Arc<Package>,
+    package: Arc<Package>,
     sender_id: AccountId,
     config: NoteCreationConfig,
 ) -> Note {
-    // Create a simple note script for demonstration using the correct assembler
-    let assembler = Assembler::default();
-    let note_script = NoteScript::compile("begin push.1 end", assembler).unwrap();
+    let note_program = package.unwrap_program();
+    let note_script = NoteScript::from_parts(
+        note_program.mast_forest().clone(),
+        note_program.entrypoint(),
+    );
 
     let serial_num = client.rng().draw_word();
     let note_inputs = NoteInputs::new(config.inputs).unwrap();
@@ -384,6 +386,8 @@ impl CompilerTest {
     pub fn compiled_package(&mut self) -> Arc<miden_mast_package::Package> {
         if self.package.is_none() {
             self.compile_wasm_to_masm_program().unwrap();
+            // uncomment to print the MASM code
+            // println!("{}", self.masm_src.clone().unwrap());
         }
         match self.package.as_ref().unwrap().as_ref() {
             Ok(prog) => prog.clone(),
