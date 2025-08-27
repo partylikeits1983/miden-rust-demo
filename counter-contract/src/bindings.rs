@@ -2,14 +2,14 @@
 // Options used:
 //   * skip: ["remove-asset", "create-note", "heap-base", "hash-one-to-one", "hash-two-to-one", "add-asset", "unchecked-from-u64"]
 //   * runtime_path: "wit_bindgen_rt"
+//   * with "miden:base/core-types@1.0.0/recipient" = "miden::Recipient"
 //   * with "miden:base/core-types@1.0.0/note-idx" = "miden::NoteIdx"
 //   * with "miden:base/core-types@1.0.0/asset" = "miden::Asset"
 //   * with "miden:base/core-types@1.0.0/felt" = "miden::Felt"
-//   * with "miden:base/core-types@1.0.0/recipient" = "miden::Recipient"
-//   * with "miden:base/core-types@1.0.0/tag" = "miden::Tag"
 //   * with "miden:base/core-types@1.0.0/word" = "miden::Word"
 //   * with "miden:base/core-types@1.0.0/account-id" = "miden::AccountId"
 //   * with "miden:base/core-types@1.0.0/note-type" = "miden::NoteType"
+//   * with "miden:base/core-types@1.0.0/tag" = "miden::Tag"
 #[rustfmt::skip]
 #[allow(dead_code, clippy::all)]
 pub mod miden {
@@ -1076,7 +1076,9 @@ macro_rules! __export_counter_world_impl {
 #[doc(inline)]
 pub(crate) use __export_counter_world_impl as export;
 #[cfg(target_arch = "wasm32")]
-#[unsafe(link_section = "component-type:wit-bindgen:0.41.0:miden:counter-contract@0.1.0:counter-world:encoded world")]
+#[unsafe(
+    link_section = "component-type:wit-bindgen:0.41.0:miden:counter-contract@0.1.0:counter-world:encoded world"
+)]
 #[doc(hidden)]
 #[allow(clippy::octal_escapes)]
 pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 2412] = *b"\
