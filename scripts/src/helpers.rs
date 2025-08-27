@@ -4,10 +4,9 @@ use std::sync::Arc;
 
 use miden_client::{
     account::{
-        component::{BasicFungibleFaucet, BasicWallet, RpoFalcon512},
+        component::{BasicWallet, RpoFalcon512},
         Account, AccountId, AccountStorageMode, AccountType, StorageSlot,
     },
-    asset::TokenSymbol,
     auth::AuthSecretKey,
     crypto::{FeltRng, SecretKey},
     keystore::FilesystemKeyStore,
@@ -23,8 +22,6 @@ use miden_objects::{
     account::{
         AccountBuilder, AccountComponent, AccountComponentMetadata, AccountComponentTemplate,
     },
-    assembly::Assembler,
-    asset::Asset,
     FieldElement,
 };
 use rand::{rngs::StdRng, RngCore};
@@ -191,11 +188,9 @@ pub fn compile_rust_package(package_path: &str, release: bool) -> Arc<Package> {
 pub struct CompilerTestBuilder {
     config: midenc_frontend_wasm::WasmTranslationConfig,
     source: CompilerTestInputType,
-    entrypoint: Option<midenc_hir::FunctionIdent>,
     link_masm_modules: Vec<(miden_assembly::LibraryPath, String)>,
     midenc_flags: Vec<String>,
     rustflags: Vec<std::borrow::Cow<'static, str>>,
-    workspace_dir: String,
 }
 
 pub enum CompilerTestInputType {
@@ -223,7 +218,6 @@ impl CargoTest {
 
 impl CompilerTestBuilder {
     pub fn new(source: CompilerTestInputType) -> Self {
-        let workspace_dir = get_workspace_dir();
         let _name = match &source {
             CompilerTestInputType::CargoMiden(config) => config.name.as_ref(),
         };
@@ -231,18 +225,16 @@ impl CompilerTestBuilder {
             "-C".into(),
             "target-feature=+bulk-memory".into(),
             "--remap-path-prefix".into(),
-            format!("{workspace_dir}=../../").into(),
+            "../../=../../".into(),
         ];
         let midenc_flags = vec!["--verbose".into()];
 
         Self {
             config: Default::default(),
             source,
-            entrypoint: None,
             link_masm_modules: vec![],
             midenc_flags,
             rustflags,
-            workspace_dir,
         }
     }
 
@@ -335,7 +327,7 @@ impl CompilerTestBuilder {
         };
 
         self.midenc_flags.append(&mut extra_midenc_flags);
-        let artifact_name = wasm_artifact_path
+        let _artifact_name = wasm_artifact_path
             .file_stem()
             .unwrap()
             .to_str()
@@ -355,13 +347,8 @@ impl CompilerTestBuilder {
         }));
 
         let context = default_context(inputs, &self.midenc_flags);
-        let session = context.session_rc();
         CompilerTest {
-            config: self.config,
-            session,
             context,
-            artifact_name: artifact_name.into(),
-            entrypoint: self.entrypoint,
             hir: None,
             masm_src: None,
             ir_masm_program: None,
@@ -371,11 +358,7 @@ impl CompilerTestBuilder {
 }
 
 pub struct CompilerTest {
-    pub config: midenc_frontend_wasm::WasmTranslationConfig,
-    pub session: std::rc::Rc<midenc_session::Session>,
     pub context: std::rc::Rc<midenc_hir::Context>,
-    artifact_name: std::borrow::Cow<'static, str>,
-    entrypoint: Option<midenc_hir::FunctionIdent>,
     hir: Option<midenc_compile::LinkOutput>,
     masm_src: Option<String>,
     ir_masm_program: Option<Result<Arc<midenc_codegen_masm::MasmComponent>, String>>,
@@ -467,101 +450,6 @@ where
     std::rc::Rc::new(session)
 }
 
-/// Get the directory for the top-level workspace
-fn get_workspace_dir() -> String {
-    // Get the directory for the integration test suite project
-    let cargo_manifest_dir = std::env::var("CARGO_MANIFEST_DIR").unwrap_or(
-        std::env::current_dir()
-            .unwrap()
-            .to_str()
-            .unwrap()
-            .to_string(),
-    );
-    let cargo_manifest_dir_path = std::path::Path::new(&cargo_manifest_dir);
-    // "Exit" the integration test suite project directory to the compiler workspace directory
-    // i.e. out of the `tests/integration` directory
-    let compiler_workspace_dir = cargo_manifest_dir_path
-        .parent()
-        .unwrap()
-        .parent()
-        .unwrap()
-        .to_str()
-        .unwrap();
-    compiler_workspace_dir.to_string()
-}
-
 fn format_report(err: impl std::fmt::Display) -> String {
     format!("{}", err)
-}
-
-pub async fn create_fungible_faucet_account(
-    client: &mut Client,
-    keystore: Arc<FilesystemKeyStore<StdRng>>,
-    token_symbol: TokenSymbol,
-    decimals: u8,
-    max_supply: Felt,
-) -> Result<Account, ClientError> {
-    let mut init_seed = [0_u8; 32];
-    client.rng().fill_bytes(&mut init_seed);
-
-    let key_pair = SecretKey::with_rng(client.rng());
-    // Sync client state to get latest block info
-    let _sync_summary = client.sync_state().await.unwrap();
-    let builder = AccountBuilder::new(init_seed)
-        .account_type(AccountType::FungibleFaucet)
-        .storage_mode(AccountStorageMode::Public)
-        .with_auth_component(RpoFalcon512::new(key_pair.public_key()))
-        .with_component(BasicFungibleFaucet::new(token_symbol, decimals, max_supply).unwrap());
-
-    let (account, seed) = builder.build().unwrap();
-    client.add_account(&account, Some(seed), false).await?;
-    keystore
-        .add_key(&AuthSecretKey::RpoFalcon512(key_pair))
-        .unwrap();
-
-    Ok(account)
-}
-
-/// Helper function to assert that an account contains a specific fungible asset
-pub async fn assert_account_has_fungible_asset(
-    client: &mut Client,
-    account_id: AccountId,
-    expected_faucet_id: AccountId,
-    expected_amount: u64,
-) {
-    let account_record = client
-        .get_account(account_id)
-        .await
-        .expect("Failed to get account")
-        .expect("Account not found");
-
-    let account_state: miden_objects::account::Account = account_record.into();
-
-    // Look for the specific fungible asset in the vault
-    let found_asset = account_state.vault().assets().find_map(|asset| {
-        if let Asset::Fungible(fungible_asset) = asset {
-            if fungible_asset.faucet_id() == expected_faucet_id {
-                Some(fungible_asset)
-            } else {
-                None
-            }
-        } else {
-            None
-        }
-    });
-
-    match found_asset {
-        Some(fungible_asset) => {
-            assert_eq!(
-                fungible_asset.amount(),
-                expected_amount,
-                "Found asset from faucet {expected_faucet_id} but amount {} doesn't match \
-                 expected {expected_amount}",
-                fungible_asset.amount()
-            );
-        }
-        None => {
-            panic!("Account does not contain a fungible asset from faucet {expected_faucet_id}");
-        }
-    }
 }

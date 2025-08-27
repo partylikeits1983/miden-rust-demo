@@ -3,6 +3,14 @@ name = "counter-deployment-script"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name = "deploy_counter_with_note"
+path = "src/deploy_counter_with_note.rs"
+
+[[bin]]
+name = "wallet_p2id_example"
+path = "src/wallet.rs"
+
 [dependencies]
 miden-client = { version = "0.10.0", features = ["testing", "tonic", "sqlite"] }
 miden-lib = { version = "0.10.0", default-features = false }

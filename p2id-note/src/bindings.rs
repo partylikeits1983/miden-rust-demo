@@ -2,14 +2,14 @@
 // Options used:
 //   * skip: ["remove-asset", "create-note", "heap-base", "hash-one-to-one", "hash-two-to-one", "add-asset", "unchecked-from-u64"]
 //   * runtime_path: "wit_bindgen_rt"
-//   * with "miden:base/core-types@1.0.0/tag" = "miden::Tag"
-//   * with "miden:base/core-types@1.0.0/felt" = "miden::Felt"
 //   * with "miden:base/core-types@1.0.0/note-type" = "miden::NoteType"
+//   * with "miden:base/core-types@1.0.0/felt" = "miden::Felt"
 //   * with "miden:base/core-types@1.0.0/note-idx" = "miden::NoteIdx"
-//   * with "miden:base/core-types@1.0.0/account-id" = "miden::AccountId"
 //   * with "miden:base/core-types@1.0.0/word" = "miden::Word"
 //   * with "miden:base/core-types@1.0.0/asset" = "miden::Asset"
+//   * with "miden:base/core-types@1.0.0/account-id" = "miden::AccountId"
 //   * with "miden:base/core-types@1.0.0/recipient" = "miden::Recipient"
+//   * with "miden:base/core-types@1.0.0/tag" = "miden::Tag"
 #[rustfmt::skip]
 #[allow(dead_code, clippy::all)]
 pub mod miden {
@@ -20,6 +20,87 @@ pub mod miden {
             #[used]
             #[doc(hidden)]
             static __FORCE_SECTION_REF: fn() = super::super::super::__link_custom_section_describing_imports;
+        }
+    }
+    pub mod basic_wallet {
+        #[allow(dead_code, async_fn_in_trait, unused_imports, clippy::all)]
+        pub mod basic_wallet {
+            #[used]
+            #[doc(hidden)]
+            static __FORCE_SECTION_REF: fn() = super::super::super::__link_custom_section_describing_imports;
+            use super::super::super::_rt;
+            #[allow(unused_unsafe, clippy::all)]
+            pub fn receive_asset(asset: miden::Asset) -> () {
+                unsafe {
+                    let miden::Asset { inner: inner0 } = asset;
+                    let miden::Word { inner: inner1 } = inner0;
+                    let (t2_0, t2_1, t2_2, t2_3) = inner1;
+                    let miden::Felt { inner: inner3 } = t2_0;
+                    let miden::Felt { inner: inner4 } = t2_1;
+                    let miden::Felt { inner: inner5 } = t2_2;
+                    let miden::Felt { inner: inner6 } = t2_3;
+                    #[cfg(target_arch = "wasm32")]
+                    #[link(wasm_import_module = "miden:basic-wallet/basic-wallet@1.0.0")]
+                    unsafe extern "C" {
+                        #[link_name = "receive-asset"]
+                        fn wit_import7(_: f32, _: f32, _: f32, _: f32);
+                    }
+                    #[cfg(not(target_arch = "wasm32"))]
+                    unsafe extern "C" fn wit_import7(_: f32, _: f32, _: f32, _: f32) {
+                        unreachable!()
+                    }
+                    unsafe {
+                        wit_import7(
+                            _rt::as_f32(inner3),
+                            _rt::as_f32(inner4),
+                            _rt::as_f32(inner5),
+                            _rt::as_f32(inner6),
+                        )
+                    };
+                }
+            }
+            #[allow(unused_unsafe, clippy::all)]
+            pub fn move_asset_to_note(
+                asset: miden::Asset,
+                note_idx: miden::NoteIdx,
+            ) -> () {
+                unsafe {
+                    let miden::Asset { inner: inner0 } = asset;
+                    let miden::Word { inner: inner1 } = inner0;
+                    let (t2_0, t2_1, t2_2, t2_3) = inner1;
+                    let miden::Felt { inner: inner3 } = t2_0;
+                    let miden::Felt { inner: inner4 } = t2_1;
+                    let miden::Felt { inner: inner5 } = t2_2;
+                    let miden::Felt { inner: inner6 } = t2_3;
+                    let miden::NoteIdx { inner: inner7 } = note_idx;
+                    let miden::Felt { inner: inner8 } = inner7;
+                    #[cfg(target_arch = "wasm32")]
+                    #[link(wasm_import_module = "miden:basic-wallet/basic-wallet@1.0.0")]
+                    unsafe extern "C" {
+                        #[link_name = "move-asset-to-note"]
+                        fn wit_import9(_: f32, _: f32, _: f32, _: f32, _: f32);
+                    }
+                    #[cfg(not(target_arch = "wasm32"))]
+                    unsafe extern "C" fn wit_import9(
+                        _: f32,
+                        _: f32,
+                        _: f32,
+                        _: f32,
+                        _: f32,
+                    ) {
+                        unreachable!()
+                    }
+                    unsafe {
+                        wit_import9(
+                            _rt::as_f32(inner3),
+                            _rt::as_f32(inner4),
+                            _rt::as_f32(inner5),
+                            _rt::as_f32(inner6),
+                            _rt::as_f32(inner8),
+                        )
+                    };
+                }
+            }
         }
     }
     pub mod core_base {
@@ -888,51 +969,47 @@ pub mod miden {
 #[allow(dead_code, clippy::all)]
 pub mod exports {
     pub mod miden {
-        pub mod counter_contract {
+        pub mod base {
+            /// The note script interface that is expected to be implemented by note scripts.
             #[allow(dead_code, async_fn_in_trait, unused_imports, clippy::all)]
-            pub mod counter {
+            pub mod note_script {
                 #[used]
                 #[doc(hidden)]
                 static __FORCE_SECTION_REF: fn() = super::super::super::super::__link_custom_section_describing_imports;
                 use super::super::super::super::_rt;
                 #[doc(hidden)]
                 #[allow(non_snake_case)]
-                pub unsafe fn _export_get_count_cabi<T: Guest>() -> f32 {
+                pub unsafe fn _export_run_cabi<T: Guest>(
+                    arg0: f32,
+                    arg1: f32,
+                    arg2: f32,
+                    arg3: f32,
+                ) {
                     #[cfg(target_arch = "wasm32")] _rt::run_ctors_once();
-                    let result0 = T::get_count();
-                    let miden::Felt { inner: inner1 } = result0;
-                    _rt::as_f32(inner1)
-                }
-                #[doc(hidden)]
-                #[allow(non_snake_case)]
-                pub unsafe fn _export_increment_count_cabi<T: Guest>() -> f32 {
-                    #[cfg(target_arch = "wasm32")] _rt::run_ctors_once();
-                    let result0 = T::increment_count();
-                    let miden::Felt { inner: inner1 } = result0;
-                    _rt::as_f32(inner1)
+                    T::run(miden::Word {
+                        inner: (
+                            miden::Felt { inner: arg0 },
+                            miden::Felt { inner: arg1 },
+                            miden::Felt { inner: arg2 },
+                            miden::Felt { inner: arg3 },
+                        ),
+                    });
                 }
                 pub trait Guest {
-                    /// Returns the current counter value stored in the contract's storage.
-                    fn get_count() -> miden::Felt;
-                    /// Increments the counter value stored in the contract's storage by one
-                    /// and return the new counter value
-                    fn increment_count() -> miden::Felt;
+                    fn run(arg: miden::Word) -> ();
                 }
                 #[doc(hidden)]
-                macro_rules! __export_miden_counter_contract_counter_0_1_0_cabi {
+                macro_rules! __export_miden_base_note_script_1_0_0_cabi {
                     ($ty:ident with_types_in $($path_to_types:tt)*) => {
                         const _ : () = { #[unsafe (export_name =
-                        "miden:counter-contract/counter@0.1.0#get-count")] unsafe extern
-                        "C" fn export_get_count() -> f32 { unsafe { $($path_to_types)*::
-                        _export_get_count_cabi::<$ty > () } } #[unsafe (export_name =
-                        "miden:counter-contract/counter@0.1.0#increment-count")] unsafe
-                        extern "C" fn export_increment_count() -> f32 { unsafe {
-                        $($path_to_types)*:: _export_increment_count_cabi::<$ty > () } }
-                        };
+                        "miden:base/note-script@1.0.0#run")] unsafe extern "C" fn
+                        export_run(arg0 : f32, arg1 : f32, arg2 : f32, arg3 : f32,) {
+                        unsafe { $($path_to_types)*:: _export_run_cabi::<$ty > (arg0,
+                        arg1, arg2, arg3) } } };
                     };
                 }
                 #[doc(hidden)]
-                pub(crate) use __export_miden_counter_contract_counter_0_1_0_cabi;
+                pub(crate) use __export_miden_base_note_script_1_0_0_cabi;
             }
         }
     }
@@ -940,6 +1017,23 @@ pub mod exports {
 #[rustfmt::skip]
 mod _rt {
     #![allow(dead_code, clippy::all)]
+    pub fn as_f32<T: AsF32>(t: T) -> f32 {
+        t.as_f32()
+    }
+    pub trait AsF32 {
+        fn as_f32(self) -> f32;
+    }
+    impl<'a, T: Copy + AsF32> AsF32 for &'a T {
+        fn as_f32(self) -> f32 {
+            (*self).as_f32()
+        }
+    }
+    impl AsF32 for f32 {
+        #[inline]
+        fn as_f32(self) -> f32 {
+            self as f32
+        }
+    }
     pub fn as_i64<T: AsI64>(t: T) -> i64 {
         t.as_i64()
     }
@@ -1022,23 +1116,6 @@ mod _rt {
             self as i32
         }
     }
-    pub fn as_f32<T: AsF32>(t: T) -> f32 {
-        t.as_f32()
-    }
-    pub trait AsF32 {
-        fn as_f32(self) -> f32;
-    }
-    impl<'a, T: Copy + AsF32> AsF32 for &'a T {
-        fn as_f32(self) -> f32 {
-            (*self).as_f32()
-        }
-    }
-    impl AsF32 for f32 {
-        #[inline]
-        fn as_f32(self) -> f32 {
-            self as f32
-        }
-    }
     #[cfg(target_arch = "wasm32")]
     pub fn run_ctors_once() {
         wit_bindgen_rt::run_ctors_once();
@@ -1062,78 +1139,85 @@ mod _rt {
 /// ```
 #[allow(unused_macros)]
 #[doc(hidden)]
-macro_rules! __export_counter_world_impl {
+macro_rules! __export_p2id_world_impl {
     ($ty:ident) => {
         self::export!($ty with_types_in self);
     };
     ($ty:ident with_types_in $($path_to_types_root:tt)*) => {
         $($path_to_types_root)*::
-        exports::miden::counter_contract::counter::__export_miden_counter_contract_counter_0_1_0_cabi!($ty
-        with_types_in $($path_to_types_root)*::
-        exports::miden::counter_contract::counter);
+        exports::miden::base::note_script::__export_miden_base_note_script_1_0_0_cabi!($ty
+        with_types_in $($path_to_types_root)*:: exports::miden::base::note_script);
     };
 }
 #[doc(inline)]
-pub(crate) use __export_counter_world_impl as export;
+pub(crate) use __export_p2id_world_impl as export;
 #[cfg(target_arch = "wasm32")]
 #[unsafe(
-    link_section = "component-type:wit-bindgen:0.41.0:miden:counter-contract@0.1.0:counter-world:encoded world"
+    link_section = "component-type:wit-bindgen:0.41.0:miden:p2id@1.0.0:p2id-world:encoded world"
 )]
 #[doc(hidden)]
 #[allow(clippy::octal_escapes)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 2412] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xe8\x11\x01A\x02\x01\
-A\x19\x01B\x02\x01@\0\0z\x04\0\x09heap-base\x01\0\x03\0*miden:core-intrinsics/in\
-trinsics-mem@1.0.0\x05\0\x01B\x1d\x01@\x01\x01aw\0v\x04\0\x12from-u64-unchecked\x01\
-\0\x01@\x01\x01ay\0v\x04\0\x08from-u32\x01\x01\x01@\x01\x01av\0w\x04\0\x06as-u64\
-\x01\x02\x01@\x02\x01av\x01bv\0v\x04\0\x03add\x01\x03\x04\0\x03sub\x01\x03\x04\0\
-\x03mul\x01\x03\x04\0\x03div\x01\x03\x01@\x01\x01av\0v\x04\0\x03neg\x01\x04\x04\0\
-\x03inv\x01\x04\x04\0\x04pow2\x01\x04\x04\0\x03exp\x01\x03\x01@\x02\x01av\x01bv\0\
-z\x04\0\x02eq\x01\x05\x04\0\x02gt\x01\x05\x04\0\x02lt\x01\x05\x04\0\x02ge\x01\x05\
-\x04\0\x02le\x01\x05\x01@\x01\x01av\0z\x04\0\x06is-odd\x01\x06\x01@\x01\x01av\x01\
-\0\x04\0\x06assert\x01\x07\x04\0\x07assertz\x01\x07\x01@\x02\x01av\x01bv\x01\0\x04\
-\0\x09assert-eq\x01\x08\x03\0+miden:core-intrinsics/intrinsics-felt@1.0.0\x05\x01\
-\x01B\x02\x01@\0\x01\0\x04\0\x05break\x01\0\x03\0,miden:core-intrinsics/intrinsi\
-cs-debug@1.0.0\x05\x02\x01B\x02\x01@\x02\x0bdigests-ptrz\x0aresult-ptrz\x01\0\x04\
-\0\x06hmerge\x01\0\x03\0-miden:core-intrinsics/intrinsics-crypto@1.0.0\x05\x03\x01\
-B\x02\x01@\x04\x04key0v\x04key1v\x04key2v\x04key3v\0v\x04\0\x10adv-push-mapvaln\x01\
-\0\x03\0-miden:core-intrinsics/intrinsics-advice@1.0.0\x05\x04\x01B\x02\x01@\x09\
-\x02a0z\x02a1z\x02a2z\x02a3z\x02a4z\x02a5z\x02a6z\x02a7z\x0aresult-ptrz\x01\0\x04\
-\0\x0fhash-one-to-one\x01\0\x03\03miden:core-stdlib/stdlib-crypto-hashes-blake3@\
-1.0.0\x05\x05\x01B\x02\x01@\x06\x09num-wordsv\x0aresult-ptrz\x02c0v\x02c1v\x02c2\
-v\x02c3v\0z\x04\0\x17pipe-preimage-to-memory\x01\0\x03\0\"miden:core-stdlib/stdl\
-ib-mem@1.0.0\x05\x06\x01B\x0f\x01@\x05\x06asset0v\x06asset1v\x06asset2v\x06asset\
-3v\x0aresult-ptrz\x01\0\x04\0\x09add-asset\x01\0\x04\0\x0cremove-asset\x01\0\x01\
-@\x01\x0aresult-ptrz\x01\0\x04\0\x06get-id\x01\x01\x01@\x02\x05indexv\x0aresult-\
-ptrz\x01\0\x04\0\x08get-item\x01\x02\x01@\x06\x05indexv\x06value0v\x06value1v\x06\
-value2v\x06value3v\x0aresult-ptrz\x01\0\x04\0\x08set-item\x01\x03\x01@\x06\x05in\
-dexv\x04key0v\x04key1v\x04key2v\x04key3v\x0aresult-ptrz\x01\0\x04\0\x0cget-map-i\
-tem\x01\x04\x01@\x0a\x05indexv\x04key0v\x04key1v\x04key2v\x04key3v\x06value0v\x06\
-value1v\x06value2v\x06value3v\x0aresult-ptrz\x01\0\x04\0\x0cset-map-item\x01\x05\
-\x01@\x01\x05valuey\x01\0\x04\0\x0aincr-nonce\x01\x06\x03\0\x1dmiden:core-base/a\
-ccount@1.0.0\x05\x07\x01B\x03\x01@\x01\x03ptrz\0z\x04\0\x0aget-inputs\x01\0\x04\0\
-\x0aget-assets\x01\0\x03\0\x1amiden:core-base/note@1.0.0\x05\x08\x01B\x04\x01@\x08\
-\x03tagv\x03auxv\x09note-typev\x0eexecution-hintv\x0arecipient0v\x0arecipient1v\x0a\
-recipient2v\x0arecipient3v\0v\x04\0\x0bcreate-note\x01\0\x01@\x06\x06asset0v\x06\
-asset1v\x06asset2v\x06asset3v\x08note-idxv\x0aresult-ptrz\x01\0\x04\0\x11add-ass\
-et-to-note\x01\x01\x03\0\x18miden:core-base/tx@1.0.0\x05\x09\x01B#\x01r\x01\x05i\
-nnerv\x04\0\x04felt\x03\0\0\x01o\x04\x01\x01\x01\x01\x01r\x01\x05inner\x02\x04\0\
-\x04word\x03\0\x03\x01r\x01\x05inner\x04\x04\0\x06digest\x03\0\x05\x01r\x02\x06p\
-refix\x01\x06suffix\x01\x04\0\x0aaccount-id\x03\0\x07\x01r\x01\x05inner\x04\x04\0\
-\x09recipient\x03\0\x09\x01r\x01\x05inner\x01\x04\0\x03tag\x03\0\x0b\x01r\x01\x05\
-inner\x04\x04\0\x05asset\x03\0\x0d\x01r\x01\x05inner\x01\x04\0\x05nonce\x03\0\x0f\
-\x01r\x01\x05inner\x04\x04\0\x0caccount-hash\x03\0\x11\x01r\x01\x05inner\x04\x04\
-\0\x0ablock-hash\x03\0\x13\x01r\x01\x05inner\x04\x04\0\x0dstorage-value\x03\0\x15\
-\x01r\x01\x05inner\x04\x04\0\x0cstorage-root\x03\0\x17\x01r\x01\x05inner\x04\x04\
-\0\x11account-code-root\x03\0\x19\x01r\x01\x05inner\x04\x04\0\x10vault-commitmen\
-t\x03\0\x1b\x01r\x01\x05inner\x01\x04\0\x08note-idx\x03\0\x1d\x01r\x01\x05inner\x01\
-\x04\0\x09note-type\x03\0\x1f\x01r\x01\x05inner\x01\x04\0\x13note-execution-hint\
-\x03\0!\x03\0\x1bmiden:base/core-types@1.0.0\x05\x0a\x02\x03\0\x0a\x04felt\x01B\x05\
-\x02\x03\x02\x01\x0b\x04\0\x04felt\x03\0\0\x01@\0\0\x01\x04\0\x09get-count\x01\x02\
-\x04\0\x0fincrement-count\x01\x02\x04\0$miden:counter-contract/counter@0.1.0\x05\
-\x0c\x04\0*miden:counter-contract/counter-world@0.1.0\x04\0\x0b\x13\x01\0\x0dcou\
-nter-world\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit-component\x070\
-.227.1\x10wit-bindgen-rust\x060.41.0";
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 2711] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\x96\x14\x01A\x02\x01\
+A\"\x01B#\x01r\x01\x05innerv\x04\0\x04felt\x03\0\0\x01o\x04\x01\x01\x01\x01\x01r\
+\x01\x05inner\x02\x04\0\x04word\x03\0\x03\x01r\x01\x05inner\x04\x04\0\x06digest\x03\
+\0\x05\x01r\x02\x06prefix\x01\x06suffix\x01\x04\0\x0aaccount-id\x03\0\x07\x01r\x01\
+\x05inner\x04\x04\0\x09recipient\x03\0\x09\x01r\x01\x05inner\x01\x04\0\x03tag\x03\
+\0\x0b\x01r\x01\x05inner\x04\x04\0\x05asset\x03\0\x0d\x01r\x01\x05inner\x01\x04\0\
+\x05nonce\x03\0\x0f\x01r\x01\x05inner\x04\x04\0\x0caccount-hash\x03\0\x11\x01r\x01\
+\x05inner\x04\x04\0\x0ablock-hash\x03\0\x13\x01r\x01\x05inner\x04\x04\0\x0dstora\
+ge-value\x03\0\x15\x01r\x01\x05inner\x04\x04\0\x0cstorage-root\x03\0\x17\x01r\x01\
+\x05inner\x04\x04\0\x11account-code-root\x03\0\x19\x01r\x01\x05inner\x04\x04\0\x10\
+vault-commitment\x03\0\x1b\x01r\x01\x05inner\x01\x04\0\x08note-idx\x03\0\x1d\x01\
+r\x01\x05inner\x01\x04\0\x09note-type\x03\0\x1f\x01r\x01\x05inner\x01\x04\0\x13n\
+ote-execution-hint\x03\0!\x03\0\x1bmiden:base/core-types@1.0.0\x05\0\x02\x03\0\0\
+\x05asset\x02\x03\0\0\x03tag\x02\x03\0\0\x09recipient\x02\x03\0\0\x09note-type\x02\
+\x03\0\0\x08note-idx\x02\x03\0\0\x04felt\x02\x03\0\0\x13note-execution-hint\x01B\
+\x12\x02\x03\x02\x01\x01\x04\0\x05asset\x03\0\0\x02\x03\x02\x01\x02\x04\0\x03tag\
+\x03\0\x02\x02\x03\x02\x01\x03\x04\0\x09recipient\x03\0\x04\x02\x03\x02\x01\x04\x04\
+\0\x09note-type\x03\0\x06\x02\x03\x02\x01\x05\x04\0\x08note-idx\x03\0\x08\x02\x03\
+\x02\x01\x06\x04\0\x04felt\x03\0\x0a\x02\x03\x02\x01\x07\x04\0\x13note-execution\
+-hint\x03\0\x0c\x01@\x01\x05asset\x01\x01\0\x04\0\x0dreceive-asset\x01\x0e\x01@\x02\
+\x05asset\x01\x08note-idx\x09\x01\0\x04\0\x12move-asset-to-note\x01\x0f\x03\0%mi\
+den:basic-wallet/basic-wallet@1.0.0\x05\x08\x01B\x02\x01@\0\0z\x04\0\x09heap-bas\
+e\x01\0\x03\0*miden:core-intrinsics/intrinsics-mem@1.0.0\x05\x09\x01B\x1d\x01@\x01\
+\x01aw\0v\x04\0\x12from-u64-unchecked\x01\0\x01@\x01\x01ay\0v\x04\0\x08from-u32\x01\
+\x01\x01@\x01\x01av\0w\x04\0\x06as-u64\x01\x02\x01@\x02\x01av\x01bv\0v\x04\0\x03\
+add\x01\x03\x04\0\x03sub\x01\x03\x04\0\x03mul\x01\x03\x04\0\x03div\x01\x03\x01@\x01\
+\x01av\0v\x04\0\x03neg\x01\x04\x04\0\x03inv\x01\x04\x04\0\x04pow2\x01\x04\x04\0\x03\
+exp\x01\x03\x01@\x02\x01av\x01bv\0z\x04\0\x02eq\x01\x05\x04\0\x02gt\x01\x05\x04\0\
+\x02lt\x01\x05\x04\0\x02ge\x01\x05\x04\0\x02le\x01\x05\x01@\x01\x01av\0z\x04\0\x06\
+is-odd\x01\x06\x01@\x01\x01av\x01\0\x04\0\x06assert\x01\x07\x04\0\x07assertz\x01\
+\x07\x01@\x02\x01av\x01bv\x01\0\x04\0\x09assert-eq\x01\x08\x03\0+miden:core-intr\
+insics/intrinsics-felt@1.0.0\x05\x0a\x01B\x02\x01@\0\x01\0\x04\0\x05break\x01\0\x03\
+\0,miden:core-intrinsics/intrinsics-debug@1.0.0\x05\x0b\x01B\x02\x01@\x02\x0bdig\
+ests-ptrz\x0aresult-ptrz\x01\0\x04\0\x06hmerge\x01\0\x03\0-miden:core-intrinsics\
+/intrinsics-crypto@1.0.0\x05\x0c\x01B\x02\x01@\x04\x04key0v\x04key1v\x04key2v\x04\
+key3v\0v\x04\0\x10adv-push-mapvaln\x01\0\x03\0-miden:core-intrinsics/intrinsics-\
+advice@1.0.0\x05\x0d\x01B\x02\x01@\x09\x02a0z\x02a1z\x02a2z\x02a3z\x02a4z\x02a5z\
+\x02a6z\x02a7z\x0aresult-ptrz\x01\0\x04\0\x0fhash-one-to-one\x01\0\x03\03miden:c\
+ore-stdlib/stdlib-crypto-hashes-blake3@1.0.0\x05\x0e\x01B\x02\x01@\x06\x09num-wo\
+rdsv\x0aresult-ptrz\x02c0v\x02c1v\x02c2v\x02c3v\0z\x04\0\x17pipe-preimage-to-mem\
+ory\x01\0\x03\0\"miden:core-stdlib/stdlib-mem@1.0.0\x05\x0f\x01B\x0f\x01@\x05\x06\
+asset0v\x06asset1v\x06asset2v\x06asset3v\x0aresult-ptrz\x01\0\x04\0\x09add-asset\
+\x01\0\x04\0\x0cremove-asset\x01\0\x01@\x01\x0aresult-ptrz\x01\0\x04\0\x06get-id\
+\x01\x01\x01@\x02\x05indexv\x0aresult-ptrz\x01\0\x04\0\x08get-item\x01\x02\x01@\x06\
+\x05indexv\x06value0v\x06value1v\x06value2v\x06value3v\x0aresult-ptrz\x01\0\x04\0\
+\x08set-item\x01\x03\x01@\x06\x05indexv\x04key0v\x04key1v\x04key2v\x04key3v\x0ar\
+esult-ptrz\x01\0\x04\0\x0cget-map-item\x01\x04\x01@\x0a\x05indexv\x04key0v\x04ke\
+y1v\x04key2v\x04key3v\x06value0v\x06value1v\x06value2v\x06value3v\x0aresult-ptrz\
+\x01\0\x04\0\x0cset-map-item\x01\x05\x01@\x01\x05valuey\x01\0\x04\0\x0aincr-nonc\
+e\x01\x06\x03\0\x1dmiden:core-base/account@1.0.0\x05\x10\x01B\x03\x01@\x01\x03pt\
+rz\0z\x04\0\x0aget-inputs\x01\0\x04\0\x0aget-assets\x01\0\x03\0\x1amiden:core-ba\
+se/note@1.0.0\x05\x11\x01B\x04\x01@\x08\x03tagv\x03auxv\x09note-typev\x0eexecuti\
+on-hintv\x0arecipient0v\x0arecipient1v\x0arecipient2v\x0arecipient3v\0v\x04\0\x0b\
+create-note\x01\0\x01@\x06\x06asset0v\x06asset1v\x06asset2v\x06asset3v\x08note-i\
+dxv\x0aresult-ptrz\x01\0\x04\0\x11add-asset-to-note\x01\x01\x03\0\x18miden:core-\
+base/tx@1.0.0\x05\x12\x02\x03\0\0\x04word\x01B\x04\x02\x03\x02\x01\x13\x04\0\x04\
+word\x03\0\0\x01@\x01\x03arg\x01\x01\0\x04\0\x03run\x01\x02\x04\0\x1cmiden:base/\
+note-script@1.0.0\x05\x14\x04\0\x1bmiden:p2id/p2id-world@1.0.0\x04\0\x0b\x10\x01\
+\0\x0ap2id-world\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit-componen\
+t\x070.227.1\x10wit-bindgen-rust\x060.41.0";
 #[inline(never)]
 #[doc(hidden)]
 pub fn __link_custom_section_describing_imports() {
