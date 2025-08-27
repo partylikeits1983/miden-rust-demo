@@ -13,8 +13,14 @@ This repository demonstrates how to use the new Miden Rust compiler to compile R
 
 ## Prerequisites
 
-- **Rust nightly-2025-07-20** (specified in `rust-toolchain.toml`)
+- **Rust nightly-2025-07-20**
 - Miden compiler tools (`cargo install cargo-miden`)
+
+Installing Rust nightly-2025-07-20 
+```bash
+rustup install nightly-2025-07-20
+rustup default nightly-2025-07-20
+```
 
 The project uses a specific Rust nightly version for compatibility with the Miden compiler. The `rust-toolchain.toml` file will automatically ensure you're using the correct version.
 
